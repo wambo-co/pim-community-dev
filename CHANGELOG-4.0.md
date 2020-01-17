@@ -1,5 +1,9 @@
 # 4.0.x
 
+## Technical Improvements
+
+- PIM-9055: Allow not to drop an existing database during the install proces
+
 # 4.0.27 (2020-05-18)
 
 # 4.0.26 (2020-05-15)
