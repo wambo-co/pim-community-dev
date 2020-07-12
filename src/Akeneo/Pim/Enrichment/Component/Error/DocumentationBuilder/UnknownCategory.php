@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilder;
+namespace Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilder;
 
-use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\ValueObject\Documentation\Documentation;
-use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\ValueObject\Documentation\DocumentationCollection;
-use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\ValueObject\Documentation\HrefMessageParameter;
-use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\ValueObject\Documentation\RouteMessageParameter;
-use Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilderInterface;
+use Akeneo\Pim\Enrichment\Component\Error\Documentation\Documentation;
+use Akeneo\Pim\Enrichment\Component\Error\Documentation\DocumentationCollection;
+use Akeneo\Pim\Enrichment\Component\Error\Documentation\HrefMessageParameter;
+use Akeneo\Pim\Enrichment\Component\Error\Documentation\RouteMessageParameter;
+use Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilderInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Exception\UnknownCategoryException;
 
 /**

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace spec\Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement;
+namespace Specification\Akeneo\Pim\Enrichment\Component\Error;
 
-use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\ValueObject\Documentation\DocumentationCollection;
-use Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilderInterface;
-use Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilderRegistry;
+use Akeneo\Pim\Enrichment\Component\Error\Documentation\DocumentationCollection;
+use Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilderInterface;
+use Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilderRegistry;
 use PhpSpec\ObjectBehavior;
 
 /**

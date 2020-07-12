@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\Connectivity\Connection\Infrastructure\Normalizer;
 
-use Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilderRegistry;
+use Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilderRegistry;
 use Akeneo\Connectivity\Connection\Infrastructure\Normalizer\ConstraintViolationNormalizer;
-use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\ValueObject\Documentation\DocumentationCollection;
+use Akeneo\Pim\Enrichment\Component\Error\Documentation\DocumentationCollection;
 use Akeneo\Pim\Enrichment\Component\Product\Model\ProductInterface;
 use Akeneo\Pim\Structure\Component\Model\FamilyInterface;
 use Akeneo\Tool\Component\StorageUtils\Repository\IdentifiableObjectRepositoryInterface;

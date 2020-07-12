@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement;
+namespace Akeneo\Pim\Enrichment\Component\Error;
 
-use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\ValueObject\Documentation\DocumentationCollection;
+use Akeneo\Pim\Enrichment\Component\Error\Documentation\DocumentationCollection;
 
 /**
  * @copyright 2020 Akeneo SAS (http://www.akeneo.com)

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\ValueObject\Documentation;
+namespace Akeneo\Pim\Enrichment\Component\Error\Documentation;
 
 /**
  * @author    Willy Mesnage <willy.mesnage@akeneo.com>

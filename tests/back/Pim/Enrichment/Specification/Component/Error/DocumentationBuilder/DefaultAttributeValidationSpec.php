@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace spec\Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilder;
+namespace Specification\Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilder;
 
-use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\ValueObject\Documentation\DocumentationCollection;
-use Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilder\DefaultAttributeValidation;
-use Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilderInterface;
+use Akeneo\Pim\Enrichment\Component\Error\Documentation\DocumentationCollection;
+use Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilder\DefaultAttributeValidation;
+use Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilderInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Validator\Constraints\Boolean;
 use Akeneo\Pim\Enrichment\Component\Product\Validator\Constraints\IsNumeric;
 use Akeneo\Pim\Enrichment\Component\Product\Validator\Constraints\IsString;

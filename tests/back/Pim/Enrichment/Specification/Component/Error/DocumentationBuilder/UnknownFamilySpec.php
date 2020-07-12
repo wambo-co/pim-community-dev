@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace spec\Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilder;
+namespace Specification\Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilder;
 
-use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\ValueObject\Documentation\DocumentationCollection;
-use Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilder\UnknownAttribute;
-use Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilderInterface;
-use Akeneo\Pim\Enrichment\Component\Product\Exception\UnknownAttributeException;
+use Akeneo\Pim\Enrichment\Component\Error\Documentation\DocumentationCollection;
+use Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilder\UnknownFamily;
+use Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilderInterface;
+use Akeneo\Pim\Enrichment\Component\Product\Exception\UnknownFamilyException;
 use PhpSpec\ObjectBehavior;
 
 /**
  * @copyright 2020 Akeneo SAS (http://www.akeneo.com)
  * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  */
-class UnknownAttributeSpec extends ObjectBehavior
+class UnknownFamilySpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->beAnInstanceOf(UnknownAttribute::class);
+        $this->beAnInstanceOf(UnknownFamily::class);
     }
 
     function it_is_a_documentation_builder()
@@ -26,9 +26,9 @@ class UnknownAttributeSpec extends ObjectBehavior
         $this->beAnInstanceOf(DocumentationBuilderInterface::class);
     }
 
-    function it_supports_the_error_unknown_attribute()
+    function it_supports_the_error_unknown_family()
     {
-        $exception = new UnknownAttributeException('attribute_code');
+        $exception = new UnknownFamilyException('family', 'family_code', self::class);
 
         $this->support($exception)->shouldReturn(true);
     }
@@ -42,36 +42,36 @@ class UnknownAttributeSpec extends ObjectBehavior
 
     function it_builds_the_documentation()
     {
-        $exception = new UnknownAttributeException('attribute_code');
+        $exception = new UnknownFamilyException('family', 'family_code', self::class);
 
         $documentation = $this->buildDocumentation($exception);
 
         $documentation->shouldHaveType(DocumentationCollection::class);
         $documentation->normalize()->shouldReturn([
             [
-                'message' => 'Please check your {attribute_settings}.',
+                'message' => 'Please check your {family_settings}.',
                 'parameters' => [
-                    'attribute_settings' => [
+                    'family_settings' => [
                         'type' => 'route',
-                        'route' => 'pim_enrich_attribute_index',
+                        'route' => 'pim_enrich_family_index',
                         'routeParameters' => [],
-                        'title' => 'Attributes settings',
+                        'title' => 'Family settings',
                     ],
                 ],
                 'style' => 'text'
             ],
             [
-                'message' => 'More information about attributes: {what_is_attribute} {manage_attribute}.',
+                'message' => 'More information about families: {what_is_a_family} {manage_your_families}.',
                 'parameters' => [
-                    'what_is_attribute' => [
+                    'what_is_a_family' => [
                         'type' => 'href',
-                        'href' => 'https://help.akeneo.com/pim/serenity/articles/what-is-an-attribute.html',
-                        'title' => 'What is an attribute?',
+                        'href' => 'https://help.akeneo.com/pim/serenity/articles/what-is-a-family.html',
+                        'title' => 'What is a family?',
                     ],
-                    'manage_attribute' => [
+                    'manage_your_families' => [
                         'type' => 'href',
-                        'href' => 'https://help.akeneo.com/pim/serenity/articles/manage-your-attributes.html',
-                        'title' => 'Manage your attributes',
+                        'href' => 'https://help.akeneo.com/pim/serenity/articles/manage-your-families.html',
+                        'title' => 'Manage your families',
                     ],
                 ],
                 'style' => 'information'

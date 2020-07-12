@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace spec\Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilder;
+namespace Specification\Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilder;
 
-use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\ValueObject\Documentation\DocumentationCollection;
-use Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilder\AttributeOptionDoesNotExist;
-use Akeneo\Connectivity\Connection\Infrastructure\ErrorManagement\DocumentationBuilderInterface;
+use Akeneo\Pim\Enrichment\Component\Error\Documentation\DocumentationCollection;
+use Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilder\AttributeOptionDoesNotExist;
+use Akeneo\Pim\Enrichment\Component\Error\DocumentationBuilderInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Validator\Constraints\AttributeOptionsExist;
 use PhpSpec\ObjectBehavior;
 use Symfony\Component\Validator\ConstraintViolationInterface;
