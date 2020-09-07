@@ -41,7 +41,7 @@ final class SendMessageToWebhooksHandler
         try {
             $webhooks = $this->selectConnectionsWebhookQuery->execute();
         } catch (\Exception $e) {
-            // YoLO
+            // TODO
         }
 
         $webhookRequests = [];
