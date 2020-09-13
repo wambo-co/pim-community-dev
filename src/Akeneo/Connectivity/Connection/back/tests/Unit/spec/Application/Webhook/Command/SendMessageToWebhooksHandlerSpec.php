@@ -7,11 +7,11 @@ namespace spec\Akeneo\Connectivity\Connection\Application\Webhook\Command;
 use Akeneo\Connectivity\Connection\Application\Webhook\Command\SendMessageToWebhooksCommand;
 use Akeneo\Connectivity\Connection\Application\Webhook\Command\SendMessageToWebhooksHandler;
 use Akeneo\Connectivity\Connection\Application\Webhook\WebhookEventBuilder;
-use Akeneo\Connectivity\Connection\Domain\Webhook\Model\ConnectionWebhook;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Client\WebhookClient;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Client\WebhookRequest;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ConnectionWebhook;
 use Akeneo\Connectivity\Connection\Domain\Webhook\Model\WebhookEvent;
-use Akeneo\Connectivity\Connection\Domain\Webhook\Model\WebhookRequest;
 use Akeneo\Connectivity\Connection\Domain\Webhook\Persistence\Query\SelectConnectionsWebhookQuery;
-use Akeneo\Connectivity\Connection\Infrastructure\Webhook\GuzzleWebhookClient;
 use Akeneo\Platform\Component\EventQueue\BusinessEventInterface;
 use PhpSpec\ObjectBehavior;
 use PHPUnit\Framework\Assert;
@@ -26,7 +26,7 @@ class SendMessageToWebhooksHandlerSpec extends ObjectBehavior
 {
     public function let(
         SelectConnectionsWebhookQuery $selectConnectionsWebhookQuery,
-        GuzzleWebhookClient $client,
+        WebhookClient $client,
         WebhookEventBuilder $builder
     ): void {
         $this->beConstructedWith($selectConnectionsWebhookQuery, $client, $builder);
@@ -40,70 +40,60 @@ class SendMessageToWebhooksHandlerSpec extends ObjectBehavior
     public function it_sends_message_to_webhooks(
         $selectConnectionsWebhookQuery,
         $client,
-        $builder
+        $builder,
+        SendMessageToWebhooksCommand $command,
+        BusinessEventInterface $businessEvent,
+        ConnectionWebhook $webhook1,
+        ConnectionWebhook $webhook2
     ): void {
+        $command->businessEvent()->willReturn($businessEvent);
 
-        $webhookBynder = new ConnectionWebhook('bynder','7', '5', 'secret_bynder','http://172.17.0.1:8000/webhook_bynder');
-        $webhookMagento = new ConnectionWebhook('magento','11', '5', 'secret_magento','http://172.17.0.1:8000/webhook_magento');
-        $businessEvent = new BusinessEvent();
+        $webhook1->userId()->willReturn(0);
+        $webhook2->userId()->willReturn(1);
+        $webhook2->url()->willReturn('http://localhost/webhook');
+        $webhook2->secret()->willReturn('a_secret');
 
-        $connectionWebhooks = [
-            $webhookBynder,
-            $webhookMagento
-        ];
+        $selectConnectionsWebhookQuery->execute()->willReturn([$webhook1, $webhook2]);
 
-        $webhookEvent = new WebhookEvent(
-            $businessEvent->name(),
-            $businessEvent->uuid(),
-            date(\DateTimeInterface::ATOM, $businessEvent->timestamp()),
-            $businessEvent->data()
-        );
+        $builder->build($businessEvent, ['user_id' => 0])->willReturn(new WebhookEvent('', '', '', []));
+        $builder->build($businessEvent, ['user_id' => 1])->willReturn(new WebhookEvent(
+            'product.created',
+            '5d30d0f6-87a6-45ad-ba6b-3a302b0d328c',
+            '2020-01-01T00:00:00+00:00',
+            ['code' => 'blue_shoes']
+        ));
 
-        $command = new SendMessageToWebhooksCommand($businessEvent);
+        $client->bulkSend(Argument::that(function (iterable $iterable) {
+            $requests = iterator_to_array($iterable);
 
-        $selectConnectionsWebhookQuery->execute()->willReturn($connectionWebhooks);
+            Assert::assertCount(2, $requests);
+            Assert::assertContainsOnlyInstancesOf(WebhookRequest::class, $requests);
 
-        $builder->build($webhookMagento, $businessEvent)->willReturn($webhookEvent);
-        $builder->build($webhookBynder, $businessEvent)->willReturn($webhookEvent);
+            // Test 2nd webhook values:
+            Assert::assertEquals('http://localhost/webhook', $requests[1]->url());
+            Assert::assertEquals('a_secret', $requests[1]->secret());
+            Assert::assertEquals([
+                'action' => 'product.created',
+                'event_id' => '5d30d0f6-87a6-45ad-ba6b-3a302b0d328c',
+                'event_date' => '2020-01-01T00:00:00+00:00',
+                'data' => ['code' => 'blue_shoes']
+            ], $requests[1]->content());
 
-        $client->bulkSend(Argument::that(function (array $params) {
-            Assert::assertCount(2, $params);
-            Assert::assertInstanceOf(WebhookRequest::class, $params[0]);
-            Assert::assertInstanceOf(WebhookRequest::class, $params[1]);
-            Assert::assertEquals($params[0]->webhook()->connectionCode(), 'bynder');
-            Assert::assertEquals($params[1]->webhook()->connectionCode(), 'magento');
             return true;
         }))->shouldBeCalled();
 
         $this->handle($command);
     }
-}
 
-class BusinessEvent implements BusinessEventInterface
-{
-    public function name(): string
-    {
-        return 'product.updated';
+    public function it_does_not_send_message_if_there_is_no_webhook(
+        $selectConnectionsWebhookQuery,
+        $client,
+        SendMessageToWebhooksCommand $command
+    ): void {
+        $selectConnectionsWebhookQuery->execute()->willReturn([]);
+
+        $client->bulkSend(Argument::any())->shouldNotBeCalled();
+
+        $this->handle($command);
     }
-
-    public function author(): string
-    {
-        return 'magento_connection';
-    }
-
-    public function data(): array
-    {
-        return [];
-    }
-
-    public function timestamp(): int
-    {
-        return 123456;
-    }
-
-    public function uuid(): string
-    {
-        return 'UUID';
-    }
-
 }

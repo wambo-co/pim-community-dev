@@ -8,6 +8,8 @@ use Akeneo\Platform\Component\EventQueue\BusinessEvent;
 use Akeneo\Platform\Component\EventQueue\BusinessEventNormalizer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * @copyright 2020 Akeneo SAS (http://www.akeneo.com)
@@ -17,65 +19,102 @@ class BusinessEventNormalizerSpec extends ObjectBehavior
 {
     public function it_is_initializable(): void
     {
-        $this->shouldBeAnInstanceOf(BusinessEventNormalizer::class);
+        $this->shouldHaveType(BusinessEventNormalizer::class);
     }
 
-    public function it_supports_normalization_for_all_class(): void
+    public function it_is_a_normalizer(): void
     {
-        $this->supportsNormalization(Argument::any())->shouldReturn(true);
+        $this->shouldImplement(NormalizerInterface::class);
     }
 
-    public function it_supports_denormalization_for_businnes_event(): void
+    public function it_supports_normalization_of_business_event(): void
     {
-        $businessEvent = new MyBusinessEvent();
+        $businessEvent = new class ('author', ['data'], 0, 'e0e4c95d-9646-40d7-be2b-d9b14fc0c6ba') extends BusinessEvent
+        {
+            public function name(): string
+            {
+                return 'event_name';
+            }
+        };
 
-        $this->supportsDenormalization([], $businessEvent)->shouldReturn(true);
+        $this->supportsNormalization($businessEvent)
+            ->shouldReturn(true);
     }
 
-    public function it_supports_denormalization_only_for_businnes_event(): void
+    public function it_does_not_supports_normalization_of_non_business_event(): void
     {
-        $notABusinessEvent = new \stdClass();
+        $object = new \stdClass();
 
-        $this->supportsDenormalization([], $notABusinessEvent)->shouldReturn(false);
+        $this->supportsNormalization($object)
+            ->shouldReturn(false);
     }
 
-    public function it_normalizes()
+    public function it_normalizes_a_business_event()
     {
-        $businessEvent = new MyBusinessEvent();
+        $businessEvent = new class ('author', ['data'], 0, 'e0e4c95d-9646-40d7-be2b-d9b14fc0c6ba') extends BusinessEvent
+        {
+            public function name(): string
+            {
+                return 'event_name';
+            }
+        };
 
         $expected = [
-            'name' => 'my_business_event',
-            'author' => 'magento_connection',
-            'data' => [],
-            'timestamp' => 123456,
-            'uuid' => 'a1603650-e1a7-4e66-8251-87f93c500087',
+            'name' => 'event_name',
+            'author' => 'author',
+            'data' => ['data'],
+            'timestamp' => 0,
+            'uuid' => 'e0e4c95d-9646-40d7-be2b-d9b14fc0c6ba',
         ];
 
-        $this->normalize($businessEvent)->shouldReturn($expected);
+        $this->normalize($businessEvent)
+            ->shouldReturn($expected);
     }
 
-    public function it_denormalizes()
+    public function it_is_a_denormalizer(): void
     {
+        $this->shouldImplement(DenormalizerInterface::class);
+    }
+
+    public function it_supports_denormalization_of_business_event(): void
+    {
+        $businessEvent = new class ('author', ['data'], 0, 'e0e4c95d-9646-40d7-be2b-d9b14fc0c6ba') extends BusinessEvent
+        {
+            public function name(): string
+            {
+                return 'event_name';
+            }
+        };
+
+        $this->supportsDenormalization([], get_class($businessEvent))
+            ->shouldReturn(true);
+    }
+
+    public function it_does_not_supports_denormalization_of_non_business_event(): void
+    {
+        $this->supportsDenormalization([], \stdClass::class)
+            ->shouldReturn(false);
+    }
+
+    public function it_denormalizes_a_business_event()
+    {
+        $businessEvent = new class ('author', ['data'], 0, 'e0e4c95d-9646-40d7-be2b-d9b14fc0c6ba') extends BusinessEvent
+        {
+            public function name(): string
+            {
+                return 'event_name';
+            }
+        };
+
         $data = [
-            'name' => 'my_business_event',
-            'author' => 'magento_connection',
-            'data' => [],
-            'timestamp' => 123456,
-            'uuid' => 'a1603650-e1a7-4e66-8251-87f93c500087',
+            'name' => 'event_name',
+            'author' => 'author',
+            'data' => ['data'],
+            'timestamp' => 0,
+            'uuid' => 'e0e4c95d-9646-40d7-be2b-d9b14fc0c6ba',
         ];
 
-        $this->denormalize($data, MyBusinessEvent::class)->shouldReturnAnInstanceOf(MyBusinessEvent::class);
-    }
-}
-
-class MyBusinessEvent extends BusinessEvent
-{
-    public function __construct(
-        string $author = 'magento_connection',
-        array $data = [],
-        ?int $timestamp = 123456,
-        ?string $uuid = 'a1603650-e1a7-4e66-8251-87f93c500087'
-    ) {
-        parent::__construct('my_business_event', $author, $data, $timestamp, $uuid);
+        $this->denormalize($data, get_class($businessEvent))
+            ->shouldBeLike($businessEvent);
     }
 }

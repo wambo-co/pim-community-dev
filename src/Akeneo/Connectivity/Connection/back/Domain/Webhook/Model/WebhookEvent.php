@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Akeneo\Connectivity\Connection\Domain\Webhook\Model;
@@ -19,9 +20,12 @@ class WebhookEvent
     /** @var string */
     private $eventDate;
 
-    /** @var array */
+    /** @var array<mixed> */
     private $data;
 
+    /**
+     * @param array<mixed> $data
+     */
     public function __construct(string $action, string $eventId, string $eventDate, array $data)
     {
         $this->action = $action;
@@ -45,18 +49,11 @@ class WebhookEvent
         return $this->eventDate;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function data(): array
     {
         return $this->data;
-    }
-
-    public function normalize(): array
-    {
-        return [
-            'action' => $this->action(),
-            'event_id' => $this->eventId(),
-            'event_date' => $this->eventDate(),
-            'data' => $this->data()
-        ];
     }
 }

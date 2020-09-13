@@ -84,6 +84,6 @@ services:
     akeneo_connectivity.connection.application.webhook.handler.send_message_to_webhooks:
         class: Akeneo\Connectivity\Connection\Application\Webhook\Command\SendMessageToWebhooksHandler
         arguments:
-            - '@akeneo_connectivity_connection_persistence_query_select_connections_webhook'
-            - '@akeneo_connectivity.connection.webhook.client.guzzle'
-            - '@akeneo_connectivity.connection.webhook.event_builder'
+            - '@akeneo_connectivity.connection.persistence.query.select_connections_webhook'
+            - '@akeneo_connectivity.connection.webhook.webhook_client'
+            - '@akeneo_connectivity.connection.webhook.webhook_event_builder'

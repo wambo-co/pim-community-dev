@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\Connectivity\Connection\Infrastructure\Persistence\Dbal\Query;
 
-use Akeneo\Connectivity\Connection\Domain\Webhook\Model\ConnectionWebhook;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ConnectionWebhook;
 use Akeneo\Connectivity\Connection\Domain\Webhook\Persistence\Query\SelectConnectionsWebhookQuery;
 use Akeneo\UserManagement\Component\Model\User;
 use Doctrine\DBAL\Connection as DbalConnection;
@@ -24,44 +24,48 @@ class DbalSelectConnectionsWebhookQuery implements SelectConnectionsWebhookQuery
         $this->dbalConnection = $dbalConnection;
     }
 
-    /**
-     * @return ConnectionWebhook[]
-     * @throws \Doctrine\DBAL\DBALException
-     */
     public function execute(): array
     {
         $sql = <<<SQL
-SELECT connection.code, 
-connection.webhook_url, 
-connection.webhook_secret, 
+SELECT connection.code,
+connection.webhook_url,
+connection.webhook_secret,
 connection.user_id,
 access_group.name as group_name
 FROM akeneo_connectivity_connection as connection
 LEFT JOIN oro_user_access_group as user_access_group ON user_access_group.user_id = connection.user_id
 LEFT JOIN oro_user_access_role as user_access_role ON user_access_role.user_id = connection.user_id
 LEFT JOIN oro_access_group access_group ON user_access_group.group_id = access_group.id
-WHERE connection.webhook_url IS NOT NULL AND connection.webhook_enabled = 1 
+WHERE connection.webhook_url IS NOT NULL AND connection.webhook_enabled = 1
 ORDER BY code
 SQL;
-        $rows = $this->dbalConnection->executeQuery($sql)->fetchAll(FetchMode::ASSOCIATIVE);
+        $result = $this->dbalConnection->executeQuery($sql)->fetchAll(FetchMode::ASSOCIATIVE);
 
-        $rawWebhooks = [];
-        foreach ($rows as $row) {
-            if (!array_key_exists($row['code'], $rawWebhooks)
-                || User::GROUP_DEFAULT === $rawWebhooks[$row['code']]['group_name']
-            ) {
-                $rawWebhooks[$row['code']] = $row;
+        /*
+         * Filter rows to keep only one row per webhook, while priorizing the non-default user groups.
+         */
+        $resultFilteredByGroup = [];
+        foreach ($result as $row) {
+            $code = $row['code'];
+
+            // Add webhook if it doesn't already exists.
+            if (!isset($resultFilteredByGroup[$code])) {
+                $resultFilteredByGroup[$code] = $row;
+            }
+
+            // Overwrite webhook to priorize the non-default user group.
+            if (User::GROUP_DEFAULT === $resultFilteredByGroup[$code]['group_name']) {
+                $resultFilteredByGroup[$code] = $row;
             }
         }
 
-
         $webhooks = [];
-        foreach ($rawWebhooks as $rawWebhook) {
+        foreach ($resultFilteredByGroup as $row) {
             $webhooks[] = new ConnectionWebhook(
-                $rawWebhook['code'],
-                (int) $rawWebhook['user_id'],
-                $rawWebhook['webhook_secret'],
-                $rawWebhook['webhook_url']
+                $row['code'],
+                (int) $row['user_id'],
+                $row['webhook_secret'],
+                $row['webhook_url']
             );
         }
 

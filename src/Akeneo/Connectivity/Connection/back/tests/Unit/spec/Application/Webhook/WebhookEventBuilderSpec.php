@@ -1,12 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace spec\Akeneo\Connectivity\Connection\Application\Webhook;
 
 use Akeneo\Connectivity\Connection\Application\Webhook\WebhookEventBuilder;
-use Akeneo\Connectivity\Connection\Application\Webhook\WebhookEventBuilderRegistry;
-use Akeneo\Connectivity\Connection\Domain\Webhook\Model\ConnectionWebhook;
 use Akeneo\Connectivity\Connection\Domain\Webhook\Model\WebhookEvent;
+use Akeneo\Connectivity\Connection\Domain\Webhook\WebhookEvent\WebhookEventDataBuilder;
 use Akeneo\Platform\Component\EventQueue\BusinessEventInterface;
 use PhpSpec\ObjectBehavior;
 
@@ -17,9 +17,9 @@ use PhpSpec\ObjectBehavior;
  */
 class WebhookEventBuilderSpec extends ObjectBehavior
 {
-    public function let(WebhookEventBuilderRegistry $dataBuilderRegistry): void
+    public function let(WebhookEventDataBuilder $eventDataBuilder1, WebhookEventDataBuilder $eventDataBuilder2): void
     {
-        $this->beConstructedWith($dataBuilderRegistry);
+        $this->beConstructedWith([$eventDataBuilder1, $eventDataBuilder2]);
     }
 
     public function it_is_initializable(): void
@@ -27,45 +27,45 @@ class WebhookEventBuilderSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(WebhookEventBuilder::class);
     }
 
-    public function it_builds_webhook_event($dataBuilderRegistry)
-    {
-        $webhook = new ConnectionWebhook('bynder',7, 'secret_bynder','http://172.17.0.1:8000/webhook');
-        $businessEvent = new BusinessEvent();
+    public function it_builds_a_webhook_event(
+        BusinessEventInterface $businessEvent,
+        $eventDataBuilder1,
+        $eventDataBuilder2
+    ): void {
+        $businessEvent->name()->willReturn('product.created');
+        $businessEvent->uuid()->willReturn('a20832d1-a1e6-4f39-99ea-a1dd859faddb');
+        $businessEvent->timestamp()->willReturn(1599814161);
 
-        $dataBuilderRegistry->build($webhook, $businessEvent)->willReturn([]);
-        $webhookEvent = $this->build($webhook, $businessEvent);
-        $webhookEvent->shouldBeAnInstanceOf(WebhookEvent::class);
-        $webhookEvent->action()->shouldBe($businessEvent->name());
-        $webhookEvent->eventId()->shouldBe($businessEvent->uuid());
-        $webhookEvent->eventDate()->shouldBe(date(\DateTimeInterface::ATOM, $businessEvent->timestamp()));
-        $webhookEvent->data()->shouldBe($businessEvent->data());
-    }
-}
+        $eventDataBuilder1->supports($businessEvent)->willReturn(false);
+        $eventDataBuilder2->supports($businessEvent)->willReturn(true);
 
-class BusinessEvent implements BusinessEventInterface
-{
-    public function name(): string
-    {
-        return 'product.updated';
-    }
+        $eventDataBuilder2->build($businessEvent, ['user_id' => 0])->willReturn(['data']);
 
-    public function author(): string
-    {
-        return 'magento_connection';
+        $this->build($businessEvent, ['user_id' => 0])
+            ->shouldBeLike(new WebhookEvent(
+                'product.created',
+                'a20832d1-a1e6-4f39-99ea-a1dd859faddb',
+                '2020-09-11T08:49:21+00:00',
+                ['data']
+            ));
     }
 
-    public function data(): array
-    {
-        return [];
-    }
+    public function it_fallbacks_to_the_business_event_data_if_there_is_no_event_data_builder(
+        BusinessEventInterface $businessEvent
+    ): void {
+        $this->beConstructedWith([]);
 
-    public function timestamp(): int
-    {
-        return 123456;
-    }
+        $businessEvent->name()->willReturn('product.created');
+        $businessEvent->uuid()->willReturn('a20832d1-a1e6-4f39-99ea-a1dd859faddb');
+        $businessEvent->timestamp()->willReturn(1599814161);
+        $businessEvent->data()->willReturn(['data']);
 
-    public function uuid(): string
-    {
-        return 'UUID';
+        $this->build($businessEvent, ['user_id' => 0])
+            ->shouldBeLike(new WebhookEvent(
+                'product.created',
+                'a20832d1-a1e6-4f39-99ea-a1dd859faddb',
+                '2020-09-11T08:49:21+00:00',
+                ['data']
+            ));
     }
 }
