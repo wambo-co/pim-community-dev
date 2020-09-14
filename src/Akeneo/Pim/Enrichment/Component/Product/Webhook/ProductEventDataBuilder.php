@@ -57,7 +57,9 @@ class ProductEventDataBuilder implements WebhookEventDataBuilder
         return $this->externalApiNormalizer->normalize($product, 'external_api');
         */
 
-        return $businessEvent->data();
+        return [
+            'resource' => $businessEvent->data()
+        ];
     }
 
     public function supports(BusinessEventInterface $businessEvent): bool
