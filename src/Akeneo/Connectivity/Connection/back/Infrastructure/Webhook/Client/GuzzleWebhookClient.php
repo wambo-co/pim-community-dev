@@ -72,10 +72,7 @@ class GuzzleWebhookClient implements WebhookClient
             'fulfilled' => function (Response $response, int $index) use (&$logContexts) {
                 $this->logger->info(
                     'Webhook fulfilled',
-                    array_merge(
-                        $logContexts[$index],
-                        ['response' => $response ? ['status_code' => $response->getStatusCode()] : null]
-                    )
+                    array_merge($logContexts[$index], ['response' => $response->getStatusCode()])
                 );
             },
             'rejected' => function (RequestException $reason, int $index) use (&$logContexts) {

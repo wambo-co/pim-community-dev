@@ -22,7 +22,7 @@ class ProductEventDataBuilder implements WebhookEventDataBuilder
 {
     private $productBuilder;
     private $productUpdater;
-    // private $productValidator;
+    private $productValidator;
     private $externalApiNormalizer;
 
     public function __construct(
@@ -33,7 +33,7 @@ class ProductEventDataBuilder implements WebhookEventDataBuilder
     ) {
         $this->productBuilder = $productBuilder;
         $this->productUpdater = $productUpdater;
-        // $this->productValidator = $productValidator;
+        $this->productValidator = $productValidator;
         $this->externalApiNormalizer = $externalApiNormalizer;
     }
 
@@ -46,14 +46,18 @@ class ProductEventDataBuilder implements WebhookEventDataBuilder
             throw new \InvalidArgumentException();
         }
 
+        /*
         $data = $businessEvent->data();
 
         $product = $this->productBuilder->createProduct($data['identifier'], $data['family'] ?? null);
         $this->productUpdater->update($product, $data);
 
-        // $this->productValidator->validate($product);
+        $this->productValidator->validate($product);
 
         return $this->externalApiNormalizer->normalize($product, 'external_api');
+        */
+
+        return $businessEvent->data();
     }
 
     public function supports(BusinessEventInterface $businessEvent): bool
