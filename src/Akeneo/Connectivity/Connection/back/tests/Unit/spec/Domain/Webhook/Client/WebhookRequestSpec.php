@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace spec\Akeneo\Connectivity\Connection\Domain\Webhook\Client;
 
 use Akeneo\Connectivity\Connection\Domain\Webhook\Client\WebhookRequest;
-use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ConnectionWebhook;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ActiveWebhook;
 use Akeneo\Connectivity\Connection\Domain\Webhook\Model\WebhookEvent;
 use PhpSpec\ObjectBehavior;
 
@@ -18,7 +18,7 @@ class WebhookRequestSpec extends ObjectBehavior
     public function let(): void
     {
         $this->beConstructedWith(
-            new ConnectionWebhook('ecommerce', 0, 'a_secret', 'http://localhost/webhook'),
+            new ActiveWebhook('ecommerce', 0, 'a_secret', 'http://localhost/webhook'),
             new WebhookEvent('product.created', '79fc4791-86d6-4d3b-93c5-76b787af9497', '2020-01-01T00:00:00+00:00', ['data'])
         );
     }

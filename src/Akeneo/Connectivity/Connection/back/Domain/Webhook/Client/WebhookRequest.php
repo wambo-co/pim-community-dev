@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\Connectivity\Connection\Domain\Webhook\Client;
 
-use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ConnectionWebhook;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ActiveWebhook;
 use Akeneo\Connectivity\Connection\Domain\Webhook\Model\WebhookEvent;
 
 /**
@@ -14,13 +14,13 @@ use Akeneo\Connectivity\Connection\Domain\Webhook\Model\WebhookEvent;
  */
 class WebhookRequest
 {
-    /** @var ConnectionWebhook */
+    /** @var ActiveWebhook */
     private $webhook;
 
     /** @var WebhookEvent */
     private $event;
 
-    public function __construct(ConnectionWebhook $webhook, WebhookEvent $event)
+    public function __construct(ActiveWebhook $webhook, WebhookEvent $event)
     {
         $this->webhook = $webhook;
         $this->event = $event;

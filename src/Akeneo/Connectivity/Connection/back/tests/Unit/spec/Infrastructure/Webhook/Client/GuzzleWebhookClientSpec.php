@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace spec\Akeneo\Connectivity\Connection\Infrastructure\Webhook\Client;
 
 use Akeneo\Connectivity\Connection\Domain\Webhook\Client\WebhookRequest;
-use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ConnectionWebhook;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ActiveWebhook;
 use Akeneo\Connectivity\Connection\Domain\Webhook\Model\WebhookEvent;
 use Akeneo\Connectivity\Connection\Infrastructure\Webhook\Client\GuzzleWebhookClient;
 use Akeneo\Connectivity\Connection\Infrastructure\Webhook\Client\Signature;
@@ -46,12 +46,12 @@ class GuzzleWebhookClientSpec extends ObjectBehavior
         $this->beConstructedWith(new Client(['handler' => $handlerStack]), new JsonEncoder(), new NullLogger());
 
         $request1 = new WebhookRequest(
-            new ConnectionWebhook('ecommerce', 0, 'a_secret', 'http://localhost/webhook1'),
+            new ActiveWebhook('ecommerce', 0, 'a_secret', 'http://localhost/webhook1'),
             new WebhookEvent('product.created', '7abae2fe-759a-4fce-aa43-f413980671b3', '2020-01-01T00:00:00+00:00', ['data_1'])
         );
 
         $request2 = new WebhookRequest(
-            new ConnectionWebhook('erp', 1, 'a_secret', 'http://localhost/webhook2'),
+            new ActiveWebhook('erp', 1, 'a_secret', 'http://localhost/webhook2'),
             new WebhookEvent('product.created', '7abae2fe-759a-4fce-aa43-f413980671b3', '2020-01-01T00:00:00+00:00', ['data_2'])
         );
 

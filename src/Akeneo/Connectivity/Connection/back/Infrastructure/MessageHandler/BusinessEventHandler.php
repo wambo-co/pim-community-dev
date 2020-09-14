@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace Akeneo\Connectivity\Connection\Infrastructure\MessageHandler;
 
-use Akeneo\Connectivity\Connection\Application\Webhook\Command\SendMessageToWebhooksCommand;
-use Akeneo\Connectivity\Connection\Application\Webhook\Command\SendMessageToWebhooksHandler;
+use Akeneo\Connectivity\Connection\Application\Webhook\Command\SendBusinessEventToWebhooksCommand;
+use Akeneo\Connectivity\Connection\Application\Webhook\Command\SendBusinessEventToWebhooksHandler;
 use Akeneo\Platform\Component\EventQueue\BusinessEventInterface;
 use Symfony\Component\Messenger\Handler\MessageSubscriberInterface;
 
 class BusinessEventHandler implements MessageSubscriberInterface
 {
-    /** @var SendMessageToWebhooksHandler */
-    private $sendMessageToWebhooksHandler;
+    /** @var SendBusinessEventToWebhooksHandler */
+    private $commandHandler;
 
-    public function __construct(
-        SendMessageToWebhooksHandler $sendMessageToWebhooksHandler
-    ) {
-        $this->sendMessageToWebhooksHandler = $sendMessageToWebhooksHandler;
+    public function __construct(SendBusinessEventToWebhooksHandler $commandHandler)
+    {
+        $this->commandHandler = $commandHandler;
     }
 
     public static function getHandledMessages(): iterable
@@ -27,8 +26,8 @@ class BusinessEventHandler implements MessageSubscriberInterface
         ];
     }
 
-    public function __invoke(BusinessEventInterface $event)
+    public function __invoke(BusinessEventInterface $businessEvent)
     {
-        $this->sendMessageToWebhooksHandler->handle(new SendMessageToWebhooksCommand($event));
+        $this->commandHandler->handle(new SendBusinessEventToWebhooksCommand($businessEvent));
     }
 }

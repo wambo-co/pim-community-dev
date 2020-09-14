@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\Connectivity\Connection\Infrastructure\Persistence\Dbal\Query;
 
-use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ConnectionWebhook;
-use Akeneo\Connectivity\Connection\Domain\Webhook\Persistence\Query\SelectConnectionsWebhookQuery;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ActiveWebhook;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Persistence\Query\SelectActiveWebhooksQuery;
 use Akeneo\UserManagement\Component\Model\User;
 use Doctrine\DBAL\Connection as DbalConnection;
 use Doctrine\DBAL\FetchMode;
@@ -14,7 +14,7 @@ use Doctrine\DBAL\FetchMode;
  * @copyright 2020 Akeneo SAS (http://www.akeneo.com)
  * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  */
-class DbalSelectConnectionsWebhookQuery implements SelectConnectionsWebhookQuery
+class DbalSelectActiveWebhooksQuery implements SelectActiveWebhooksQuery
 {
     /** @var DbalConnection */
     private $dbalConnection;
@@ -61,7 +61,7 @@ SQL;
 
         $webhooks = [];
         foreach ($resultFilteredByGroup as $row) {
-            $webhooks[] = new ConnectionWebhook(
+            $webhooks[] = new ActiveWebhook(
                 $row['code'],
                 (int) $row['user_id'],
                 $row['webhook_secret'],

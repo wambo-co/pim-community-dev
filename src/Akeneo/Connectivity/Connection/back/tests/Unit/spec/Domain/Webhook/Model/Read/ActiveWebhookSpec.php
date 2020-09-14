@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read;
 
-use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ConnectionWebhook;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ActiveWebhook;
 use PhpSpec\ObjectBehavior;
 
 /**
  * @copyright 2020 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  */
-class ConnectionWebhookSpec extends ObjectBehavior
+class ActiveWebhookSpec extends ObjectBehavior
 {
     public function let(): void
     {
@@ -20,7 +20,7 @@ class ConnectionWebhookSpec extends ObjectBehavior
 
     public function it_is_initializable(): void
     {
-        $this->shouldHaveType(ConnectionWebhook::class);
+        $this->shouldHaveType(ActiveWebhook::class);
     }
 
     public function it_returns_a_connection_code(): void

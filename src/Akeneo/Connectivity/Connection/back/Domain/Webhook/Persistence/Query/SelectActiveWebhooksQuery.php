@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Akeneo\Connectivity\Connection\Domain\Webhook\Persistence\Query;
 
-use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ConnectionWebhook;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ActiveWebhook;
 
-interface SelectConnectionsWebhookQuery
+interface SelectActiveWebhooksQuery
 {
     /**
-     * @return ConnectionWebhook[]
+     * @return ActiveWebhook[]
      */
     public function execute(): array;
 }

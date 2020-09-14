@@ -60,8 +60,7 @@ services:
         arguments:
             - '@database_connection'
 
-    akeneo_connectivity.connection.persistence.query.select_connections_webhook:
-        class: Akeneo\Connectivity\Connection\Infrastructure\Persistence\Dbal\Query\DbalSelectConnectionsWebhookQuery
+    akeneo_connectivity.connection.persistence.query.select_active_webhooks:
+        class: Akeneo\Connectivity\Connection\Infrastructure\Persistence\Dbal\Query\DbalSelectActiveWebhooksQuery
         arguments:
             - '@database_connection'
-

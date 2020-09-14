@@ -81,9 +81,9 @@ services:
         arguments:
             - '@akeneo_connectivity.connection.persistence.repository.error_count'
 
-    akeneo_connectivity.connection.application.webhook.handler.send_message_to_webhooks:
-        class: Akeneo\Connectivity\Connection\Application\Webhook\Command\SendMessageToWebhooksHandler
+    akeneo_connectivity.connection.application.webhook.handler.send_business_event_to_webhooks:
+        class: Akeneo\Connectivity\Connection\Application\Webhook\Command\SendBusinessEventToWebhooksHandler
         arguments:
-            - '@akeneo_connectivity.connection.persistence.query.select_connections_webhook'
+            - '@akeneo_connectivity.connection.persistence.query.select_active_webhooks'
             - '@akeneo_connectivity.connection.webhook.webhook_client'
             - '@akeneo_connectivity.connection.webhook.webhook_event_builder'

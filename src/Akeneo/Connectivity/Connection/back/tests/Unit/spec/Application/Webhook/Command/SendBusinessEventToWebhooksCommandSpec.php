@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\Connectivity\Connection\Application\Webhook\Command;
 
-use Akeneo\Connectivity\Connection\Application\Webhook\Command\SendMessageToWebhooksCommand;
+use Akeneo\Connectivity\Connection\Application\Webhook\Command\SendBusinessEventToWebhooksCommand;
 use Akeneo\Platform\Component\EventQueue\BusinessEventInterface;
 use PhpSpec\ObjectBehavior;
 
@@ -13,7 +13,7 @@ use PhpSpec\ObjectBehavior;
  * @copyright 2020 Akeneo SAS (http://www.akeneo.com)
  * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  */
-class SendMessageToWebhooksCommandSpec extends ObjectBehavior
+class SendBusinessEventToWebhooksCommandSpec extends ObjectBehavior
 {
     public function let(BusinessEventInterface $businessEvent): void
     {
@@ -22,7 +22,7 @@ class SendMessageToWebhooksCommandSpec extends ObjectBehavior
 
     public function it_is_initializable(): void
     {
-        $this->shouldBeAnInstanceOf(SendMessageToWebhooksCommand::class);
+        $this->shouldBeAnInstanceOf(SendBusinessEventToWebhooksCommand::class);
     }
 
     public function it_returns_the_business_event($businessEvent): void

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\Connectivity\Connection\Application\Webhook\Command;
 
-use Akeneo\Connectivity\Connection\Application\Webhook\Command\SendMessageToWebhooksCommand;
-use Akeneo\Connectivity\Connection\Application\Webhook\Command\SendMessageToWebhooksHandler;
+use Akeneo\Connectivity\Connection\Application\Webhook\Command\SendBusinessEventToWebhooksCommand;
+use Akeneo\Connectivity\Connection\Application\Webhook\Command\SendBusinessEventToWebhooksHandler;
 use Akeneo\Connectivity\Connection\Application\Webhook\WebhookEventBuilder;
 use Akeneo\Connectivity\Connection\Domain\Webhook\Client\WebhookClient;
 use Akeneo\Connectivity\Connection\Domain\Webhook\Client\WebhookRequest;
-use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ConnectionWebhook;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Model\Read\ActiveWebhook;
 use Akeneo\Connectivity\Connection\Domain\Webhook\Model\WebhookEvent;
-use Akeneo\Connectivity\Connection\Domain\Webhook\Persistence\Query\SelectConnectionsWebhookQuery;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Persistence\Query\SelectActiveWebhooksQuery;
 use Akeneo\Platform\Component\EventQueue\BusinessEventInterface;
 use PhpSpec\ObjectBehavior;
 use PHPUnit\Framework\Assert;
@@ -22,29 +22,29 @@ use Prophecy\Argument;
  * @copyright 2020 Akeneo SAS (http://www.akeneo.com)
  * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  */
-class SendMessageToWebhooksHandlerSpec extends ObjectBehavior
+class SendBusinessEventToWebhooksHandlerSpec extends ObjectBehavior
 {
     public function let(
-        SelectConnectionsWebhookQuery $selectConnectionsWebhookQuery,
+        SelectActiveWebhooksQuery $selectActiveWebhooksQuery,
         WebhookClient $client,
         WebhookEventBuilder $builder
     ): void {
-        $this->beConstructedWith($selectConnectionsWebhookQuery, $client, $builder);
+        $this->beConstructedWith($selectActiveWebhooksQuery, $client, $builder);
     }
 
     public function it_is_initializable(): void
     {
-        $this->shouldBeAnInstanceOf(SendMessageToWebhooksHandler::class);
+        $this->shouldBeAnInstanceOf(SendBusinessEventToWebhooksHandler::class);
     }
 
     public function it_sends_message_to_webhooks(
-        $selectConnectionsWebhookQuery,
+        $selectActiveWebhooksQuery,
         $client,
         $builder,
-        SendMessageToWebhooksCommand $command,
+        SendBusinessEventToWebhooksCommand $command,
         BusinessEventInterface $businessEvent,
-        ConnectionWebhook $webhook1,
-        ConnectionWebhook $webhook2
+        ActiveWebhook $webhook1,
+        ActiveWebhook $webhook2
     ): void {
         $command->businessEvent()->willReturn($businessEvent);
 
@@ -53,7 +53,7 @@ class SendMessageToWebhooksHandlerSpec extends ObjectBehavior
         $webhook2->url()->willReturn('http://localhost/webhook');
         $webhook2->secret()->willReturn('a_secret');
 
-        $selectConnectionsWebhookQuery->execute()->willReturn([$webhook1, $webhook2]);
+        $selectActiveWebhooksQuery->execute()->willReturn([$webhook1, $webhook2]);
 
         $builder->build($businessEvent, ['user_id' => 0])->willReturn(new WebhookEvent('', '', '', []));
         $builder->build($businessEvent, ['user_id' => 1])->willReturn(new WebhookEvent(
@@ -86,11 +86,11 @@ class SendMessageToWebhooksHandlerSpec extends ObjectBehavior
     }
 
     public function it_does_not_send_message_if_there_is_no_webhook(
-        $selectConnectionsWebhookQuery,
+        $selectActiveWebhooksQuery,
         $client,
-        SendMessageToWebhooksCommand $command
+        SendBusinessEventToWebhooksCommand $command
     ): void {
-        $selectConnectionsWebhookQuery->execute()->willReturn([]);
+        $selectActiveWebhooksQuery->execute()->willReturn([]);
 
         $client->bulkSend(Argument::any())->shouldNotBeCalled();
 

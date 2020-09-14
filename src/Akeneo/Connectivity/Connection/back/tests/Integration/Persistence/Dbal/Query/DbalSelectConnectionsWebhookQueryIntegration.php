@@ -9,7 +9,7 @@ use Akeneo\Connectivity\Connection\Application\Settings\Command\UpdateConnection
 use Akeneo\Connectivity\Connection\back\tests\Integration\Fixtures\ConnectionLoader;
 use Akeneo\Connectivity\Connection\Domain\Settings\Model\Read\ConnectionWithCredentials;
 use Akeneo\Connectivity\Connection\Domain\Settings\Model\ValueObject\FlowType;
-use Akeneo\Connectivity\Connection\Domain\Webhook\Persistence\Query\SelectConnectionsWebhookQuery;
+use Akeneo\Connectivity\Connection\Domain\Webhook\Persistence\Query\SelectActiveWebhooksQuery;
 use Akeneo\Test\Integration\Configuration;
 use Akeneo\Test\Integration\TestCase;
 use Doctrine\DBAL\Connection as DbalConnection;
@@ -20,13 +20,13 @@ use PHPUnit\Framework\Assert;
  * @copyright 2020 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class DbalSelectConnectionsWebhookQueryIntegration extends TestCase
+class DbalSelectActiveWebhooksQueryIntegration extends TestCase
 {
     /** @var ConnectionLoader */
     private $connectionLoader;
 
-    /** @var SelectConnectionsWebhookQuery */
-    private $selectConnectionsWebhookQuery;
+    /** @var SelectActiveWebhooksQuery */
+    private $selectActiveWebhooksQuery;
 
     /** @var DbalConnection */
     private $dbalConnection;
@@ -39,7 +39,7 @@ class DbalSelectConnectionsWebhookQueryIntegration extends TestCase
         parent::setUp();
 
         $this->connectionLoader = $this->get('akeneo_connectivity.connection.fixtures.connection_loader');
-        $this->selectConnectionsWebhookQuery = $this->get('akeneo_connectivity.connection.persistence.query.select_connections_webhook');
+        $this->selectActiveWebhooksQuery = $this->get('akeneo_connectivity.connection.persistence.query.select_connections_webhook');
         $this->dbalConnection = $this->get('database_connection');
         $this->updateConnectionHandler = $this->get('akeneo_connectivity.connection.application.handler.update_connection');
     }
@@ -69,7 +69,7 @@ class DbalSelectConnectionsWebhookQueryIntegration extends TestCase
         $this->updateConnection($erp, 'secret_erp', 'http://localhost/webhook_erp', true);
         $this->updateConnection($sap, 'secret_sap', 'http://localhost/webhook_sap', false);
 
-        $connections = $this->selectConnectionsWebhookQuery->execute();
+        $connections = $this->selectActiveWebhooksQuery->execute();
 
         $binder = $connections[0];
         $erp = $connections[1];
@@ -90,7 +90,7 @@ class DbalSelectConnectionsWebhookQueryIntegration extends TestCase
 
         $this->updateConnection($ecommerce, 'secret', 'http://localhost/webhook', false);
 
-        $connections = $this->selectConnectionsWebhookQuery->execute();
+        $connections = $this->selectActiveWebhooksQuery->execute();
 
         Assert::assertCount(0, $connections);
     }
