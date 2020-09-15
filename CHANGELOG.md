@@ -27,6 +27,9 @@
 - PIM-9370: Fixes page freezing with a big number of attribute options
 - PIM-9391: Filter empty prices and measurement values
 - PIM-9407: Fix glitch in family variant selector if the family variant has no label
+- PIM-9425: Fix inaccurate attribute max characters
+- PIM-9443: Do not cache extensions.json
+
 
 ## New features
 
@@ -34,6 +37,7 @@
 - MET-14: Measurements (or metrics) are now stored in database
 - AOB-277: Add an acl to allow a role member to view all job executions in last job execution grids, job tracker and last operations widget.
 - RAC-54: Add a new type of associations: Association with quantity
+- RAC-123: Add possibility to export product/product model with labels instead of code
 
 ## Improvements
 
@@ -43,6 +47,8 @@
 - API-1225: Be able to get attributes searching by updated date
 - API-1226: Be able to get attributes searching by a list of attribute types
 - PIM-9368: Allow minimum translation progress of 70% instead of 80%
+- PIM-9398: Add a primary key on connection table
+- PIM-9371: Disable save button when user creation form is not ready to submit
 
 # Technical Improvements
 
